@@ -1,8 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/pages/Home/index'
-import Terms from '@/pages/Terms/index'
-import Shop from '@/pages/Shop/index'
 
 Vue.use(Router)
 
@@ -11,17 +8,17 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: () => import('@/pages/Home/index')
     },
     {
       path: '/Terms',
       name: 'Terms',
-      component: Terms
+      component: () => import('@/pages/Terms/index')
     },
     {
       path: '/Shop',
       name: 'Shop',
-      component: Shop
+      component: () => import('@/pages/Shop/index')
     }
   ]
 })
