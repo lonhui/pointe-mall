@@ -11,8 +11,11 @@
                 <div class="commodity-img">
                     <img :src="item.image">
                 </div>
-                <div class="commodity-button">
+                <div class="commodity-button" v-if="buttonShow">
                     <a :href="item.sourceWeb"><button>BELI</button></a>
+                </div>
+                <div class="Disable-button" v-else>
+                    <button>BELI</button>
                 </div>
             </div>
         </div>
@@ -24,7 +27,8 @@ export default {
     data(){
         return{
             list:[],
-            user:{}
+            user:{},
+            buttonShow:true
         }
     },
     mounted(){
@@ -47,6 +51,7 @@ export default {
                 this.user.device_id=did[1]
             }else{
                 alert('请先登录！')
+                this.buttonShow=false
             }
         }
     }
@@ -125,6 +130,21 @@ export default {
     border-radius: 5px;
     background-color: #82c345
 }
+.Disable-button{
+    width: 86px;
+    height: 40px;
+    margin: 10px auto 0;
+    border-radius: 5px;
+}
+.Disable-button button{
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-weight: bold;
+    border: 0;
+    border-radius: 5px;
+    background-color: #a3a3a3
+}
 
 @media only screen and (min-width: 720px) {
     .header {
@@ -171,6 +191,17 @@ export default {
         border-radius: 15px;
     }
     .commodity-button button{
+        font-size: 40px;
+        font-family: opensans;
+        border-radius: 15px;
+    }
+    .Disable-button{
+        width: 256px;
+        height: 120px;
+        margin: 30px auto 0;
+        border-radius: 15px;
+    }
+    .Disable-button button{
         font-size: 40px;
         font-family: opensans;
         border-radius: 15px;
