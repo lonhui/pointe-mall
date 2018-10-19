@@ -37,18 +37,25 @@ export default {
     },
     methods:{
         getProductList(){
-            this.$axios.get(process.env.API_ROOT+'/cms/product/list')
-            .then((res)=>{
-                this.list = res.data.data.data
-            })
+            // this.$axios.get(process.env.API_ROOT+'/cms/product/list')
+            // .then((res)=>{
+            //     this.list = res.data.data.data
+            // })
         },
         getUid(){
             const url = window.location.href
             let uid = url.match(/[^a-zA-Z0-9]u{1,1}=([0-9]+)/)
             let did = url.match(/[^a-zA-Z0-9]c{1,1}=([a-z0-9]+)/)
             if(uid&&did){
-                this.user.uid=uid[1]
-                this.user.device_id=did[1]
+                 this.$axios.get('/v2/ccsp/user/'+uid[1]+'/'+did[1])
+                .then((res)=>{
+                    if(res.data.code==301){
+                        alert('用户不存在！')
+                    }else if(res.data.code==0){
+                        this.user.uid=uid[1]
+                        this.user.device_id=did[1]
+                    }
+                })
             }else{
                 alert('请先登录！')
                 this.buttonShow=false
