@@ -6,13 +6,26 @@
                 <router-link to="/Shop"><button>Cara Berbelanja</button></router-link>
             </div>
         </div>
-        <div class="list">
+        <!-- 未登录提示 -->
+        <div class="noLogin" v-if="!buttonShow">
+            Kamu harus login dulu untuk ikutan event ini
+        </div>
+        <!-- 网络错误提示 -->
+        <div class="internetError" v-if="internetErrorShow">
+            Oops, mohon cek koneksi internetnya terlebih dahulu
+            <img src="@/assets/Refresh.png" @click="getUid">
+        </div>
+        <!-- 加载中动画 -->
+        <div class="loading" v-show="loading">
+            <img src="@/assets/5-121204194032.gif" @click="getProductList">
+        </div>
+        <div class="list" v-show="!loading">
             <div class="commodity" v-for="item in list" :key="item.id">
                 <div class="commodity-img">
                     <img :src="item.image">
                 </div>
                 <div class="commodity-button" v-if="buttonShow">
-                    <a :href="item.sourceWeb"><button>BELI</button></a>
+                    <a :href="item.source_web"><button>BELI</button></a>
                 </div>
                 <div class="Disable-button" v-else>
                     <button>BELI</button>
@@ -28,36 +41,49 @@ export default {
         return{
             list:[],
             user:{},
-            buttonShow:true
+            buttonShow:true,
+            internetErrorShow:false,
+            loading:false
         }
     },
     mounted(){
         this.getUid()
-        this.getProductList()
     },
     methods:{
         getProductList(){
-            // this.$axios.get(process.env.API_ROOT+'/cms/product/list')
-            // .then((res)=>{
-            //     this.list = res.data.data.data
-            // })
+            this.loading=true
+            // process.env.API_ROOT+
+            this.$axios.get('/v2/product/h5/list?limit=10000&offset=0')
+            .then((res)=>{
+                this.list = res.data.data.list
+                this.loading=false
+            },(error)=>{
+                this.internetErrorShow=true
+                this.loading=false
+            })
         },
         getUid(){
             const url = window.location.href
             let uid = url.match(/[^a-zA-Z0-9]u{1,1}=([0-9]+)/)
             let did = url.match(/[^a-zA-Z0-9]c{1,1}=([a-z0-9]+)/)
             if(uid&&did){
+                 this.loading=true
+                // process.env.API_ROOT+
                  this.$axios.get('/v2/ccsp/user/'+uid[1]+'/'+did[1])
                 .then((res)=>{
                     if(res.data.code==301){
-                        alert('用户不存在！')
+                         this.buttonShow=false
+                        // alert('用户不存在！')
                     }else if(res.data.code==0){
                         this.user.uid=uid[1]
                         this.user.device_id=did[1]
+                        this.getProductList()
                     }
+                },(error)=>{
+                    this.loading=false
+                    this.internetErrorShow=true
                 })
             }else{
-                alert('请先登录！')
                 this.buttonShow=false
             }
         }
@@ -151,6 +177,36 @@ export default {
     border: 0;
     border-radius: 5px;
     background-color: #a3a3a3
+}
+.noLogin{
+    border:#f5dab1 1px solid;
+    width: 80%;
+    line-height: 40px;
+    border-radius: 5px;
+    background-color: #fdf6ec;
+    color: #e6a23c;
+    text-align: center;
+    margin: 10px auto 0;
+}
+.internetError{
+    border:#fbc4c4 1px solid;
+    width: 90%;
+    line-height: 40px;
+    border-radius: 5px;
+    background-color: #fef0f0;
+    color: #f56c6c;
+    text-align: center;
+    margin: 10px auto 0;
+}
+.internetError img{
+    height: 26px;
+    position: relative;
+    top:7px;
+    left: 10px;
+}
+.loading{
+    text-align: center;
+    margin-top: 20px;
 }
 
 @media only screen and (min-width: 720px) {
