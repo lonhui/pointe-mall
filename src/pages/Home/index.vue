@@ -53,7 +53,7 @@ export default {
         getProductList(){
             this.loading=true
             // process.env.API_ROOT+
-            this.$axios.get('/v2/product/h5/list?limit=10000&offset=0')
+            this.$axios.get(process.env.API_ROOT+'/v2/product/h5/list?limit=10000&offset=0')
             .then((res)=>{
                 this.list = res.data.data.list
                 this.loading=false
@@ -64,12 +64,12 @@ export default {
         },
         getUid(){
             const url = window.location.href
-            let uid = url.match(/[^a-zA-Z0-9]u{1,1}=([0-9]+)/)
+            let uid = url.match(/[^a-zA-Z0-9]u{1,1}=([0-9\-]+)/)
             let did = url.match(/[^a-zA-Z0-9]c{1,1}=([a-z0-9]+)/)
             if(uid&&did){
                  this.loading=true
                 // process.env.API_ROOT+
-                 this.$axios.get('/v2/ccsp/user/'+uid[1]+'/'+did[1])
+                 this.$axios.get(process.env.API_ROOT+'/v2/ccsp/user/'+uid[1]+'/'+did[1])
                 .then((res)=>{
                     if(res.data.code==301){
                          this.buttonShow=false
