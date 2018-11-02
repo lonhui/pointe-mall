@@ -48,6 +48,7 @@ export default {
     },
     mounted(){
         this.getUid()
+        this.getProductList()
     },
     methods:{
         getProductList(){
